@@ -423,10 +423,11 @@ class TTAGS_OT_SelectByTag(Operator):
         ],
         default='SET'
     )
+    enabled = True
 
-    @classmethod
-    def poll(cls, context):
-        return hasattr(cls, "tag_name") 
+    # @classmethod
+    # def poll(cls, context):
+    #     return cls.enabled
 
     def execute(self, context):
         if not self.tag_name:
@@ -628,10 +629,10 @@ class TTAGS_UL_SelectedObjectTagsList(UIList):
                 status_icon = 'CHECKBOX_HLT' # All selected objects have this tag
                 tag_status_text = f"{tag_name} (All)"
             elif current_tag_status == 'SOME':
-                status_icon = 'CHECKBOX_DEHLT' # Some selected objects have this tag (partial)
+                status_icon = 'PIVOT_BOUNDBOX' # Some selected objects have this tag (partial)
                 tag_status_text = f"{tag_name} (Some)"
             else: # Tag not on selection (shouldn't appear here if list is accurate)
-                status_icon = 'DOT' 
+                status_icon = 'CHECKBOX_DEHLT' 
                 tag_status_text = f"{tag_name} (None)"
 
 
@@ -657,30 +658,19 @@ class TTAGS_UL_AvailableTagsInFileList(UIList):
         if self.layout_type in {'DEFAULT', 'COMPACT'}:
             row = layout.row(align=True)
             row.label(text=tag_name, icon='TAG') 
-            
-            op_toggle = row.operator(TTAGS_OT_ToggleTagOnSelection.bl_idname, text="Toggle", icon='UV_SYNC_SELECT')
-            op_toggle.tag_name = tag_name
-            
+                    
             # Select buttons container
             select_row = row.row(align=True)
             select_row.scale_x = 0.8 # Make buttons smaller to fit
-
-            op_sel_set = select_row.operator(TTAGS_OT_SelectByTag.bl_idname, text="Set", icon='RESTRICT_SELECT_OFF')
-            op_sel_set.tag_name = tag_name
-            op_sel_set.mode = 'SET'
             
-            op_sel_add = select_row.operator(TTAGS_OT_SelectByTag.bl_idname, text="+", icon='ADD')
+            op_sel_add = select_row.operator(TTAGS_OT_SelectByTag.bl_idname, text="+")
             op_sel_add.tag_name = tag_name
             op_sel_add.mode = 'ADD'
 
-            op_sel_sub = select_row.operator(TTAGS_OT_SelectByTag.bl_idname, text="-", icon='REMOVE')
+            op_sel_sub = select_row.operator(TTAGS_OT_SelectByTag.bl_idname, text="-")
             op_sel_sub.tag_name = tag_name
             op_sel_sub.mode = 'SUBTRACT'
             
-            # Filter buttons could be added here if desired
-            # op_filter_and = select_row.operator(TTAGS_OT_SelectByTag.bl_idname, text="&&", icon='FILTER')
-            # op_filter_and.tag_name = tag_name
-            # op_filter_and.mode = 'FILTER_AND'
 
         elif self.layout_type == 'GRID':
             layout.alignment = 'CENTER'
